@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const app = express();
 require('dotenv').config();
+app.use(cors())
 // require('./app/routes/auth.routes')(app);
 
 var corsOptions = {
@@ -34,8 +35,7 @@ app.use(
 const db = require("./app/models");
 
 db.mongoose
-    .connect(`mongodb+srv://sayantanduttasd1999:Honda627@cluster0.nfmlgmh.mongodb.net/Portfolio
-    `, {
+    .connect(process.env.MONGO_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
