@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const details = mongoose.model('details',
     new mongoose.Schema({
-        email: { type: String, default: null, required: true },
+        user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'users', required: true, unique: true },
         profile: { type: String, default: null },
         exp: { type: [], default: [] },
         skills: { type: [], default: [] },
