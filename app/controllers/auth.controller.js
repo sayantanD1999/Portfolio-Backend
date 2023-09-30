@@ -2,16 +2,15 @@ const { signup, signin } = require('../services/auth.services')
 
 
 exports.signup = async (req, res) => {
-    console.log('cont');
-    let result = await signup(req.body, res);
-    return result;
+
+    const signupService = await signup(req.body)
+    return res.status(signupService.status).send(signupService.msg);
 }
 
 exports.signin = async (req, res) => {
-    let result = await signin(req.body, res);
-    return result;
 
-
+    const signinService = await signin(req.body)
+    return res.status(signinService.status).send(signinService.msg);
 }
 
 exports.signout = async (req, res) => {

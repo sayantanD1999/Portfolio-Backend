@@ -1,9 +1,10 @@
-const db = require("../models");
+// const db = require("../models");
 const express = require("express");
 const fileUpload = require('express-fileupload');
+const { details } = require("../models");
 const app = express();
-const details = db.details;
-const users = db.user;
+
+// const users = db.user;
 
 app.use(
     fileUpload({
@@ -14,31 +15,45 @@ app.use(
     })
 );
 
+
 exports.skills = async (req, res) => {
-    if (req.method == "PATCH") {
+
+    if (req.method == "POST") {
         try {
-            const id = req.params.id;
+            console.log('req.user', req.user)
             const { skills } = req.body;
             if (skills.length == 0) {
                 res.status(400).send('Skills cannot be blank');
             }
-
-
-            const user = await users.findOne({ id });
-            console.log(user)
-            if (!user) {
-                return res.status(400).json({ msg: "Invalid User" });
-            }
-            else {
-                await details.create(
-                    {
-                        skills: skills
-                    }
-                )
-            }
-
-
+            await details.create(
+                {
+                    skills: skills,
+                    user_id: req.user._id
+                }
+            )
             return res.status(200).json({ msg: "Skills Added Successfully." });
+
+
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({ msg: "Something went wrong" });
+        }
+    }
+    if (req.method == "PATCH") {
+        try {
+            const user_id = req.params.user_id;
+            const { skills } = req.body;
+            if (skills.length == 0) {
+                res.status(400).send('Skills cannot be blank');
+            }
+            const details_db = await details.findOne({ user_id })
+            if (details_db) {
+                details_db.skills = skills;
+                details_db.save();
+                return res.status(200).json({ msg: "Skills Updated Successfully." });
+            } else {
+                return res.status(422).json({ msg: "Invalid User Id" });
+            }
 
 
         } catch (error) {
@@ -48,9 +63,14 @@ exports.skills = async (req, res) => {
     }
     if (req.method == "GET") {
         try {
-            const data = await details.findOne({ _id: req.params.id })
-            console.log(data)
-            return res.status(200).json({ msg: "Skills fetched successfully", data: data.skills });
+            const user_id = req.params.user_id
+            const data = await details.findOne({ user_id })
+            if (data) {
+                return res.status(200).json({ msg: "Skills fetched successfully", data: data.skills });
+            } else {
+                return res.status(422).json({ msg: "Invalid User Id" });
+            }
+
 
         } catch (error) {
             console.log(error)
@@ -58,6 +78,7 @@ exports.skills = async (req, res) => {
         }
     }
 }
+
 
 exports.projects = async (req, res) => {
     if (req.method == "PATCH") {
@@ -117,10 +138,11 @@ exports.projects = async (req, res) => {
     }
 }
 
+
 exports.profileDetails = async (req, res) => {
 
     const email = req.params.email;
-    const data = await Details.findOne({ email })
+    const data = await details.findOne({ email })
 
     res.status(200).send({ data: data });
 }
