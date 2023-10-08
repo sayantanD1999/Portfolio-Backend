@@ -144,5 +144,5 @@ exports.profileDetails = async (req, res) => {
     const email = req.params.email;
     const data = await details.findOne({ email })
 
-    res.status(200).send({ data: data });
+    return res.status(200).send({ data: data });
 }

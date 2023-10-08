@@ -8,15 +8,9 @@ var bcrypt = require("bcryptjs");
 
 const signup = async (data) => {
     // Our register logic starts here
-    console.log('called')
     try {
         // Get user input
         const { name, email, password } = data;
-
-        // Validate user input
-        if (!(email && password)) {
-            res.status(400).send("All input is required");
-        }
 
         // check if user already exist
         // Validate if user exist in our database
@@ -24,6 +18,8 @@ const signup = async (data) => {
         if (oldUser) {
             return { status: 422, msg: "User Already Exist.Please Login" }
         }
+
+
 
         //Encrypt user password
         encryptedUserPassword = await bcrypt.hash(password, 10);
@@ -62,11 +58,6 @@ const signin = async (data) => {
         // Get user input
         const { email, password } = data;
 
-        // Validate user input
-        if (!(email && password)) {
-            // res.status(400).send("All input is required");
-            return { status: 400, msg: "All input is required" }
-        }
         // Validate if user exist in our database
         const user = await User.findOne({ email });
 
@@ -82,12 +73,13 @@ const signin = async (data) => {
 
             // save user token
             user.token = token;
+            user.expiresIn = "1h"
 
             // user
-            return res.status(200).json(user);
+            return { status: 200, data: user }
         }
         // return res.status(400).send("Invalid Credentials");
-        return { status: 400, msg: "Invalid Credentials" }
+        return { status: 400, data: "Invalid Credentials" }
 
         // Our login logic ends here
 

@@ -12,7 +12,9 @@ app.use(cors())
 // require('./app/routes/auth.routes')(app);
 
 var corsOptions = {
-    origin: "http://localhost:8001"
+    origin: "http://localhost:3000",
+    credentials: true,            //access-control-allow-credentials:true
+    optionSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));

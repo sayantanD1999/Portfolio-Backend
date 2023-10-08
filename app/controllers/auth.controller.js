@@ -1,16 +1,45 @@
+const { validationResult } = require("express-validator");
 const { signup, signin } = require('../services/auth.services')
 
 
 exports.signup = async (req, res) => {
 
-    const signupService = await signup(req.body)
-    return res.status(signupService.status).send(signupService.msg);
+    const { name, email, password } = req.body;
+
+    const errors = validationResult(req);
+    // console.log(errors)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+
+
+    if (!(email && password)) {
+        return res.status(400).json({
+            message: "All input is required!",
+        })
+    }
+    else {
+        const signupService = await signup(req.body)
+        return res.status(signupService.status).json({
+            message: signupService.msg,
+        })
+    }
+
 }
 
 exports.signin = async (req, res) => {
 
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const signinService = await signin(req.body)
-    return res.status(signinService.status).send(signinService.msg);
+    return res.status(signinService.status).json(
+        signinService.data)
+
+
 }
 
 exports.signout = async (req, res) => {
