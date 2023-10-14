@@ -30,6 +30,7 @@ const signup = async (data) => {
             email: email.toLowerCase(), // sanitize
             password: encryptedUserPassword,
         });
+        const new_user = await User.findOne({ email })
 
         // console.log(process.env.TOKEN_KEY)
 
@@ -45,7 +46,12 @@ const signup = async (data) => {
         // user.token = token;
 
         // return new user
-        return { status: 200, msg: "Account Created Successfully, Now Log In" }
+        return {
+            status: 200, data: {
+                data: new_user,
+                msg: "Account Created Successfully, Now Log In"
+            }
+        }
     } catch (err) {
         console.log(err);
     }

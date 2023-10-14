@@ -1,14 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
-
-const auth = require("./app/middlewares/authjwt");
-
-const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
 const app = express();
 require('dotenv').config();
 app.use(cors())
+
+
 // require('./app/routes/auth.routes')(app);
 
 var corsOptions = {

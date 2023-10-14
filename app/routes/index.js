@@ -11,8 +11,11 @@ const ApiUserValidator = new UserValidator();
 router.post('/api/signup', ApiUserValidator.signup(), userController.signup);
 router.post('/api/signin', ApiUserValidator.signin(), userController.signin);
 
-//Details
-router.get('/api/profile/:email', tokenValidation, detailsController.profileDetails);
+//Profile Details
+router.get('/api/profile/:user_id', tokenValidation, detailsController.profileDetails);
+router.put('/api/profile/:user_id', tokenValidation, detailsController.profileDetails);
+router.post('/api/profile/:user_id', tokenValidation, detailsController.profileDetails);
+
 
 //Skills
 router.post('/api/skills', tokenValidation, detailsController.skills);

@@ -4,8 +4,14 @@ const { user } = require("../models");
 const config = process.env;
 
 const verifyToken = async (req, res, next) => {
+
+  // console.log(req.headers)
+
   const token =
-    req.body.token || req.query.token || req.headers["Authorization"];
+    (req.body.token || req.query.token || req.headers["authorization"]).split(' ')[1];
+
+    console.log(token)
+
 
   if (!token) {
     return res.status(403).send("A token is required for authentication");

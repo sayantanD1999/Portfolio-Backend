@@ -1,8 +1,11 @@
 // const db = require("../models");
+const { getProfile, updateProfile, createProfile } = require('../services/details.services')
 const express = require("express");
 const fileUpload = require('express-fileupload');
 const { details } = require("../models");
 const app = express();
+
+
 
 // const users = db.user;
 
@@ -141,8 +144,28 @@ exports.projects = async (req, res) => {
 
 exports.profileDetails = async (req, res) => {
 
-    const email = req.params.email;
-    const data = await details.findOne({ email })
-
-    return res.status(200).send({ data: data });
+    if (req.params.user_id) {
+        if (req.method == "GET") {
+            const user_id = req.params.user_id;
+            const profileService = await getProfile(user_id)
+            return res.status(profileService.status).json(
+                profileService.data)
+        }
+        if (req.method == "POST") {
+            const user_id = req.params.user_id;
+            const { details } = req.body;
+            const profileService = await createProfile(details, user_id, req)
+            console.log(profileService)
+            return res.status(profileService.status).json(
+                profileService.data)
+        }
+        if (req.method == "PUT") {
+            const user_id = req.params.user_id;
+            const { details } = req.body;
+            const profileService = await updateProfile(details, user_id)
+            console.log(profileService)
+            return res.status(profileService.status).json(
+                profileService.data)
+        }
+    }
 }
