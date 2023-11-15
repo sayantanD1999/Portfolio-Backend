@@ -10,6 +10,7 @@ const User = mongoose.model(
     nationality: { type: String, unique: false },
     password: { type: String, default: null },
     token: { type: String },
+    image: { type: String }
   })
 );
 

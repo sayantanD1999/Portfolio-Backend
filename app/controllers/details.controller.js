@@ -1,123 +1,52 @@
 // const db = require("../models");
-const { getProfile, updateProfile, createProfile } = require('../services/details.services')
+const { getProfile, updateProfile, getSkills, updateSkills, updateProfileImage } = require('../services/details.services')
 const express = require("express");
-const fileUpload = require('express-fileupload');
 const { details } = require("../models");
-const app = express();
+const { validationResult } = require("express-validator");
 
-
-
-// const users = db.user;
-
-app.use(
-    fileUpload({
-        limits: {
-            fileSize: 10000000,
-        },
-        abortOnLimit: true,
-    })
-);
-
-
-exports.skills = async (req, res) => {
-
-    if (req.method == "POST") {
-        try {
-            console.log('req.user', req.user)
-            const { skills } = req.body;
-            if (skills.length == 0) {
-                res.status(400).send('Skills cannot be blank');
-            }
-            await details.create(
-                {
-                    skills: skills,
-                    user_id: req.user._id
-                }
-            )
-            return res.status(200).json({ msg: "Skills Added Successfully." });
-
-
-        } catch (error) {
-            console.log(error)
-            res.status(400).json({ msg: "Something went wrong" });
-        }
-    }
-    if (req.method == "PATCH") {
-        try {
-            const user_id = req.params.user_id;
-            const { skills } = req.body;
-            if (skills.length == 0) {
-                res.status(400).send('Skills cannot be blank');
-            }
-            const details_db = await details.findOne({ user_id })
-            if (details_db) {
-                details_db.skills = skills;
-                details_db.save();
-                return res.status(200).json({ msg: "Skills Updated Successfully." });
-            } else {
-                return res.status(422).json({ msg: "Invalid User Id" });
-            }
-
-
-        } catch (error) {
-            console.log(error)
-            res.status(400).json({ msg: "Something went wrong" });
-        }
-    }
-    if (req.method == "GET") {
-        try {
-            const user_id = req.params.user_id
-            const data = await details.findOne({ user_id })
-            if (data) {
-                return res.status(200).json({ msg: "Skills fetched successfully", data: data.skills });
-            } else {
-                return res.status(422).json({ msg: "Invalid User Id" });
-            }
-
-
-        } catch (error) {
-            console.log(error)
-            return res.status(400).json({ msg: "Something went wrong" });
-        }
-    }
-}
-
+var formidable = require('formidable');
 
 exports.projects = async (req, res) => {
     if (req.method == "PATCH") {
         try {
-            const id = req.params.id;
-            const { projects } = req.body;
-            if (projects.length == 0) {
-                res.status(400).send('Projects cannot be blank');
-            }
+            const id = req.params.user_id;
+            console.log('body', req.body)
 
 
-            const user = await users.findOne({ id });
-            if (!user) {
-                return res.status(400).json({ msg: "Invalid User" });
-            }
-            else {
-                let arr = [];
-                for (let i = 0; i < projects.length; i++) {
-                    if (!projects.img) {
-                        return res.status(400).json({ msg: "Image is required for all projects" });
-                    }
+            var form = new formidable.IncomingForm();
+            form.parse(req, function (err, fields, files) {
+                // `file` is the name of the <input> field of type `file`
+                console.log(files);
+                console.log(fields);
+            });
 
-                    // If does not have image mime type prevent from uploading
-                    if (/^image/.test(projects.img.mimetype)) return res.sendStatus(400);
+            // const { projects } = req.body;
 
-                    // Move the uploaded image to our upload folder
-                    image.mv(__dirname + '/assets/project' + image.name);
+            // const user = await users.findOne({ id });
+            // if (!user) {
+            //     return res.status(400).json({ msg: "Invalid User" });
+            // }
+            // else {
+            //     let arr = [];
+            //     for (let i = 0; i < projects.length; i++) {
+            //         if (!projects.img) {
+            //             return res.status(400).json({ msg: "Image is required for all projects" });
+            //         }
 
-                }
+            //         // If does not have image mime type prevent from uploading
+            //         if (/^image/.test(projects.img.mimetype)) return res.sendStatus(400);
 
-                await details.create(
-                    {
-                        projects: projects
-                    }
-                )
-            }
+            //         // Move the uploaded image to our upload folder
+            //         image.mv(__dirname + '/assets/project' + image.name);
+
+            //     }
+
+            //     await details.create(
+            //         {
+            //             projects: projects
+            //         }
+            //     )
+            // }
 
 
             return res.status(200).json({ msg: "Projects Added Successfully." });
@@ -142,30 +71,74 @@ exports.projects = async (req, res) => {
 }
 
 
-exports.profileDetails = async (req, res) => {
+exports.profileImage = async (req, res) => {
 
+    if (req.file) {
+        if (req.params.user_id) {
+            const profileService = await updateProfileImage(req)
+            return res.status(profileService.status).json(
+                profileService.data)
+        }
+    } else {
+        return res.status(400).json({ msg: "Please provide an image" });
+    }
+
+}
+
+
+exports.profileDetails = async (req, res) => {
+    const errors = validationResult(req)
     if (req.params.user_id) {
         if (req.method == "GET") {
+
             const user_id = req.params.user_id;
             const profileService = await getProfile(user_id)
+            console.log(profileService.data)
             return res.status(profileService.status).json(
                 profileService.data)
         }
-        if (req.method == "POST") {
-            const user_id = req.params.user_id;
-            const { details } = req.body;
-            const profileService = await createProfile(details, user_id, req)
-            console.log(profileService)
-            return res.status(profileService.status).json(
-                profileService.data)
-        }
-        if (req.method == "PUT") {
+        if (req.method == "PATCH") {
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
             const user_id = req.params.user_id;
             const { details } = req.body;
             const profileService = await updateProfile(details, user_id)
-            console.log(profileService)
             return res.status(profileService.status).json(
                 profileService.data)
+        }
+    }
+}
+
+exports.skills = async (req, res) => {
+    const errors = validationResult(req);
+
+    if (req.method == "PATCH") {
+        try {
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+            const user_id = req.params.user_id;
+            const { skills } = req.body;
+            const skillService = await updateSkills(skills, user_id)
+            return res.status(skillService.status).json(
+                skillService.data)
+
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({ msg: "Something went wrong" });
+        }
+    }
+    if (req.method == "GET") {
+        try {
+            console.log(req.user._id.toString())
+            const user_id = req.params.user_id
+            const skillService = await getSkills(user_id)
+            return res.status(skillService.status).json(
+                skillService.data)
+        } catch (error) {
+            console.log(error)
+            return res.status(400).json({ msg: "Something went wrong" });
         }
     }
 }

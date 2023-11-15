@@ -1,10 +1,11 @@
 const { check } = require("express-validator");
 const UserService = require("../models/user.model");
+const DetailsService = require("../models/details.model");
 const UserServiceClass = new UserService();
-class UserValidator extends UserService {
-    constructor() {
-        super();
-    }
+
+
+class UserValidator {
+
     signup() {
         return [
             check("email")
@@ -57,4 +58,34 @@ class UserValidator extends UserService {
     }
 }
 
-module.exports = UserValidator;
+class DetailsValidator {
+
+    Skill() {
+        return [
+            check("skills")
+                .isArray({ min: 1 })
+                .withMessage("Skills should not be empty")
+        ];
+    }
+
+    Projects() {
+        return [
+            check("projects")
+                .isArray({ min: 1 })
+                .withMessage("Projects should not be empty")
+        ];
+    }
+
+    Profile() {
+        return [
+            check("details.email")
+                .notEmpty()
+                .withMessage("Email is mandatory")
+        ];
+    }
+    
+}
+
+module.exports = {
+    UserValidator, DetailsValidator
+}

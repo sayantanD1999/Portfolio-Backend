@@ -30,6 +30,12 @@ const signup = async (data) => {
             email: email.toLowerCase(), // sanitize
             password: encryptedUserPassword,
         });
+        await Details.create({
+            user_id: user._id,
+            profile: {
+                email: email.toLowerCase(), // sanitize
+            }
+        });
         const new_user = await User.findOne({ email })
 
         // console.log(process.env.TOKEN_KEY)
@@ -46,6 +52,7 @@ const signup = async (data) => {
         // user.token = token;
 
         // return new user
+        console.log(new_user)
         return {
             status: 200, data: {
                 data: new_user,
@@ -73,13 +80,13 @@ const signin = async (data) => {
                 { user_id: user._id, email },
                 process.env.TOKEN_KEY,
                 {
-                    expiresIn: "1h",
+                    expiresIn: "4h",
                 }
             );
 
             // save user token
             user.token = token;
-            user.expiresIn = "1h"
+            user.expiresIn = "4h"
 
             // user
             return { status: 200, data: user }

@@ -21,9 +21,9 @@ exports.signup = async (req, res) => {
     }
     else {
         const signupService = await signup(req.body)
-        return res.status(signupService.status).json({
-            message: signupService.msg,
-        })
+        console.log(signupService)
+        return res.status(signupService.status).json(
+            signupService.data)
     }
 
 }
