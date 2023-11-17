@@ -80,7 +80,7 @@ const signin = async (data) => {
                 { user_id: user._id, email },
                 process.env.TOKEN_KEY,
                 {
-                    expiresIn: "4h",
+                    expiresIn: "8h",
                 }
             );
 
@@ -88,8 +88,13 @@ const signin = async (data) => {
             user.token = token;
             user.expiresIn = "4h"
 
+            let obj = user;
+            obj.password=""
+
+            // console.log(obj)
+
             // user
-            return { status: 200, data: user }
+            return { status: 200, data: obj }
         }
         // return res.status(400).send("Invalid Credentials");
         return { status: 400, data: "Invalid Credentials" }

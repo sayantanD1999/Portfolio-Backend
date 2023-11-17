@@ -70,9 +70,9 @@ class DetailsValidator {
 
     Projects() {
         return [
-            check("projects")
-                .isArray({ min: 1 })
-                .withMessage("Projects should not be empty")
+            check("name")
+                .notEmpty()
+                .withMessage('Unique project name is required')
         ];
     }
 

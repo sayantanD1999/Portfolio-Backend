@@ -1,55 +1,47 @@
 // const db = require("../models");
-const { getProfile, updateProfile, getSkills, updateSkills, updateProfileImage } = require('../services/details.services')
-const express = require("express");
-const { details } = require("../models");
+const { getProfile, updateProfile, getSkills, updateSkills, updateProfileImage,deleteProject, getProjects, updateProject, updateExperience, getExperience, addProject } = require('../services/details.services')
+const { details, projects } = require("../models");
 const { validationResult } = require("express-validator");
 
 var formidable = require('formidable');
 
 exports.projects = async (req, res) => {
+
+    if (req.method == "POST") {
+        try {
+            // console.log('body', req.body, req.file)
+            if (req.file) {
+                if (req.params.user_id) {
+                    const projectService = await addProject(req)
+                    return res.status(projectService.status).json(
+                        projectService.data)
+                } else {
+                    return res.status(400).json({ msg: "Invalid Request" });
+                }
+            } else {
+                return res.status(422).json({ msg: "Please provide an image" });
+            }
+
+
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({ msg: "Something went wrong" });
+        }
+    }
     if (req.method == "PATCH") {
         try {
-            const id = req.params.user_id;
-            console.log('body', req.body)
-
-
-            var form = new formidable.IncomingForm();
-            form.parse(req, function (err, fields, files) {
-                // `file` is the name of the <input> field of type `file`
-                console.log(files);
-                console.log(fields);
-            });
-
-            // const { projects } = req.body;
-
-            // const user = await users.findOne({ id });
-            // if (!user) {
-            //     return res.status(400).json({ msg: "Invalid User" });
-            // }
-            // else {
-            //     let arr = [];
-            //     for (let i = 0; i < projects.length; i++) {
-            //         if (!projects.img) {
-            //             return res.status(400).json({ msg: "Image is required for all projects" });
-            //         }
-
-            //         // If does not have image mime type prevent from uploading
-            //         if (/^image/.test(projects.img.mimetype)) return res.sendStatus(400);
-
-            //         // Move the uploaded image to our upload folder
-            //         image.mv(__dirname + '/assets/project' + image.name);
-
-            //     }
-
-            //     await details.create(
-            //         {
-            //             projects: projects
-            //         }
-            //     )
-            // }
-
-
-            return res.status(200).json({ msg: "Projects Added Successfully." });
+            // console.log('body', req.body, req.file)
+            if (req.file) {
+                if (req.params._id) {
+                    const projectService = await updateProject(req)
+                    return res.status(projectService.status).json(
+                        projectService.data)
+                } else {
+                    return res.status(400).json({ msg: "Invalid Request" });
+                }
+            } else {
+                return res.status(422).json({ msg: "Please provide an image" });
+            }
 
 
         } catch (error) {
@@ -59,9 +51,28 @@ exports.projects = async (req, res) => {
     }
     if (req.method == "GET") {
         try {
-            const data = await details.findOne({ _id: req.params.id })
-            console.log(data)
-            return res.status(200).json({ msg: "Projects fetched successfully", data: data.projects });
+            if (req.params.user_id) {
+                const projectService = await getProjects(req)
+                return res.status(projectService.status).json(
+                    projectService.data)
+            } else {
+                return res.status(400).json({ msg: "Invalid Request" });
+            }
+
+        } catch (error) {
+            console.log(error)
+            return res.status(400).json({ msg: "Something went wrong" });
+        }
+    }
+    if (req.method == "DELETE") {
+        try {
+            if (req.params._id) {
+                const projectService = await deleteProject(req)
+                return res.status(projectService.status).json(
+                    projectService.data)
+            } else {
+                return res.status(400).json({ msg: "Invalid Request" });
+            }
 
         } catch (error) {
             console.log(error)
@@ -69,7 +80,6 @@ exports.projects = async (req, res) => {
         }
     }
 }
-
 
 exports.profileImage = async (req, res) => {
 
@@ -84,7 +94,6 @@ exports.profileImage = async (req, res) => {
     }
 
 }
-
 
 exports.profileDetails = async (req, res) => {
     const errors = validationResult(req)
@@ -136,6 +145,39 @@ exports.skills = async (req, res) => {
             const skillService = await getSkills(user_id)
             return res.status(skillService.status).json(
                 skillService.data)
+        } catch (error) {
+            console.log(error)
+            return res.status(400).json({ msg: "Something went wrong" });
+        }
+    }
+}
+
+exports.experience = async (req, res) => {
+    const errors = validationResult(req);
+
+    if (req.method == "PATCH") {
+        try {
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+            const user_id = req.params.user_id;
+            const { experience } = req.body;
+            const experienceService = await updateExperience(experience, user_id)
+            return res.status(experienceService.status).json(
+                experienceService.data)
+
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({ msg: "Something went wrong" });
+        }
+    }
+    if (req.method == "GET") {
+        try {
+            console.log(req.user._id.toString())
+            const user_id = req.params.user_id
+            const experienceService = await getExperience(user_id)
+            return res.status(experienceService.status).json(
+                experienceService.data)
         } catch (error) {
             console.log(error)
             return res.status(400).json({ msg: "Something went wrong" });
