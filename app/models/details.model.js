@@ -8,15 +8,15 @@ const details = mongoose.model('details',
             email: { type: String },
             dob: { type: String },
             gender: { type: String },
-            image: {type: String},
-            phone: {type: String},
+            image: { type: String },
+            phone: { type: String },
             profile_description: { type: String },
         },
         exp: { type: Array },
         skills: { type: Array },
-        projects: { type: Array }
+        education: { type: Array }
 
-    }, {timestamps: true})
+    }, { timestamps: true })
 )
 
 module.exports = details;

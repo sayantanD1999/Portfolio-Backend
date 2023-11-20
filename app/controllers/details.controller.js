@@ -1,14 +1,17 @@
 // const db = require("../models");
-const { getProfile, updateProfile, getSkills, updateSkills, updateProfileImage,deleteProject, getProjects, updateProject, updateExperience, getExperience, addProject } = require('../services/details.services')
+const { getProfile, updateProfile, getSkills, updateSkills, getEducation, updateEducation, updateProfileImage, deleteProject, getProjects, updateProject, updateExperience, getExperience, addProject } = require('../services/details.services')
 const { details, projects } = require("../models");
 const { validationResult } = require("express-validator");
 
 var formidable = require('formidable');
 
 exports.projects = async (req, res) => {
-
+    const errors = validationResult(req)
     if (req.method == "POST") {
         try {
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
             // console.log('body', req.body, req.file)
             if (req.file) {
                 if (req.params.user_id) {
@@ -30,6 +33,9 @@ exports.projects = async (req, res) => {
     }
     if (req.method == "PATCH") {
         try {
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
             // console.log('body', req.body, req.file)
             if (req.file) {
                 if (req.params._id) {
@@ -151,6 +157,40 @@ exports.skills = async (req, res) => {
         }
     }
 }
+
+exports.education = async (req, res) => {
+    const errors = validationResult(req);
+
+    if (req.method == "PATCH") {
+        try {
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+            const user_id = req.params.user_id;
+            const { education } = req.body;
+            const educationService = await updateEducation(education, user_id)
+            return res.status(educationService.status).json(
+                educationService.data)
+
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({ msg: "Something went wrong" });
+        }
+    }
+    if (req.method == "GET") {
+        try {
+            console.log(req.user._id.toString())
+            const user_id = req.params.user_id
+            const educationService = await getEducation(user_id)
+            return res.status(educationService.status).json(
+                educationService.data)
+        } catch (error) {
+            console.log(error)
+            return res.status(400).json({ msg: "Something went wrong" });
+        }
+    }
+}
+
 
 exports.experience = async (req, res) => {
     const errors = validationResult(req);

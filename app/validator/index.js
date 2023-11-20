@@ -72,8 +72,7 @@ class DetailsValidator {
         return [
             check("name")
                 .notEmpty()
-                .withMessage('Unique project name is required')
-        ];
+                .withMessage('Project name is required')];
     }
 
     Profile() {
@@ -83,7 +82,16 @@ class DetailsValidator {
                 .withMessage("Email is mandatory")
         ];
     }
+
+    Education() {
+        return [
+            check("education")
+                .isArray({ min: 1 })
+                .withMessage("Education should not be empty")
+        ];
+    }
     
+
 }
 
 module.exports = {

@@ -228,6 +228,39 @@ const updateSkills = async (details, user_id) => {
     }
 }
 
+//Education
+
+const getEducation = async (user_id) => {
+    const data = await Details.findOne({ user_id })
+    return {
+        status: 200, data: {
+            data: data.education,
+            message: "Education Fetched Successfully"
+        }
+    }
+}
+
+const updateEducation = async (details, user_id) => {
+    // const _id = user_id
+    const data = await Details.findOne({ user_id })
+    console.log(details, data)
+    if (data) {
+        // console.log(details)
+        data.education = details
+        data.user_id = user_id
+        data.save();
+        return {
+            status: 200, data: {
+                data: data.education,
+                message: "Education Updated Successfully"
+            }
+        }
+    }
+    else {
+        return { status: 422, data: { message: "Invalid Request" } }
+    }
+}
+
 
 //Experience
 
@@ -270,6 +303,7 @@ const updateExperience = async (details, user_id) => {
 module.exports = {
     getProfile, updateProfile,
     getSkills, updateSkills,
+    getEducation, updateEducation,
     getExperience, updateExperience,
     addProject, updateProject, getProjects,
     deleteProject,
