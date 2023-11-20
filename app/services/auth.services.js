@@ -8,15 +8,9 @@ var bcrypt = require("bcryptjs");
 
 const signup = async (data) => {
     // Our register logic starts here
-    console.log('called')
     try {
         // Get user input
         const { name, email, password } = data;
-
-        // Validate user input
-        if (!(email && password)) {
-            res.status(400).send("All input is required");
-        }
 
         // check if user already exist
         // Validate if user exist in our database
@@ -24,6 +18,8 @@ const signup = async (data) => {
         if (oldUser) {
             return { status: 422, msg: "User Already Exist.Please Login" }
         }
+
+
 
         //Encrypt user password
         encryptedUserPassword = await bcrypt.hash(password, 10);
@@ -34,6 +30,13 @@ const signup = async (data) => {
             email: email.toLowerCase(), // sanitize
             password: encryptedUserPassword,
         });
+        await Details.create({
+            user_id: user._id,
+            profile: {
+                email: email.toLowerCase(), // sanitize
+            }
+        });
+        const new_user = await User.findOne({ email })
 
         // console.log(process.env.TOKEN_KEY)
 
@@ -49,7 +52,13 @@ const signup = async (data) => {
         // user.token = token;
 
         // return new user
-        return { status: 200, msg: "Account Created Successfully, Now Log In" }
+        console.log(new_user)
+        return {
+            status: 200, data: {
+                data: new_user,
+                msg: "Account Created Successfully, Now Log In"
+            }
+        }
     } catch (err) {
         console.log(err);
     }
@@ -62,11 +71,6 @@ const signin = async (data) => {
         // Get user input
         const { email, password } = data;
 
-        // Validate user input
-        if (!(email && password)) {
-            // res.status(400).send("All input is required");
-            return { status: 400, msg: "All input is required" }
-        }
         // Validate if user exist in our database
         const user = await User.findOne({ email });
 
@@ -76,18 +80,24 @@ const signin = async (data) => {
                 { user_id: user._id, email },
                 process.env.TOKEN_KEY,
                 {
-                    expiresIn: "1h",
+                    expiresIn: "8h",
                 }
             );
 
             // save user token
             user.token = token;
+            user.expiresIn = "4h"
+
+            let obj = user;
+            obj.password=""
+
+            // console.log(obj)
 
             // user
-            return res.status(200).json(user);
+            return { status: 200, data: obj }
         }
         // return res.status(400).send("Invalid Credentials");
-        return { status: 400, msg: "Invalid Credentials" }
+        return { status: 400, data: "Invalid Credentials" }
 
         // Our login logic ends here
 

@@ -3,12 +3,20 @@ const mongoose = require('mongoose');
 const details = mongoose.model('details',
     new mongoose.Schema({
         user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'users', required: true, unique: true },
-        profile: { type: String, default: null },
-        exp: { type: [], default: [] },
-        skills: { type: [], default: [] },
-        projects: { type: [], default: [] }
+        profile: {
+            name: { type: String },
+            email: { type: String },
+            dob: { type: String },
+            gender: { type: String },
+            image: { type: String },
+            phone: { type: String },
+            profile_description: { type: String },
+        },
+        exp: { type: Array },
+        skills: { type: Array },
+        education: { type: Array }
 
-    })
+    }, { timestamps: true })
 )
 
 module.exports = details;

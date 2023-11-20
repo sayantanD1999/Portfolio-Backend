@@ -1,18 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
-
-const auth = require("./app/middlewares/authjwt");
-
-const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
+const path = require('path');
 const app = express();
 require('dotenv').config();
-app.use(cors())
-// require('./app/routes/auth.routes')(app);
+const dbMongoose = require('./app/utils/db')
+dbMongoose();
+
+
 
 var corsOptions = {
-    origin: "http://localhost:8001"
+    origin: "http://localhost:3000",
+    credentials: true,            //access-control-allow-credentials:true
+    optionSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
@@ -31,22 +31,13 @@ app.use(
     })
 );
 
-
-const db = require("./app/models");
-
-db.mongoose
-    .connect(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    })
-    .then(() => {
-        console.log("Successfully connect to MongoDB.");
-        // initial();
-    })
-    .catch(err => {
-        console.error("Connection error", err);
-        process.exit();
-    });
+/*
+app.use('/a',express.static('/b'));
+Above line would serve all files/folders inside of the 'b' directory
+And make them accessible through http://localhost:3000/a.
+*/
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static('uploads'));
 
 
 // simple route
