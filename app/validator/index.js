@@ -1,4 +1,4 @@
-const { check } = require("express-validator");
+const { check, body } = require("express-validator");
 const UserService = require("../models/user.model");
 const DetailsService = require("../models/details.model");
 const UserServiceClass = new UserService();
@@ -72,7 +72,11 @@ class DetailsValidator {
         return [
             check("name")
                 .notEmpty()
-                .withMessage('Project name is required')];
+                .withMessage('Project name is required')
+                .custom(async (value) => {
+                    console.log("value:",value)
+                })
+        ]
     }
 
     Profile() {
@@ -90,7 +94,7 @@ class DetailsValidator {
                 .withMessage("Education should not be empty")
         ];
     }
-    
+
 
 }
 

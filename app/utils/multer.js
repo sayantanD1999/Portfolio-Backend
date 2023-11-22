@@ -7,7 +7,8 @@ const project_img_loc = './public/project_img_uploads';
 var storage = multer.diskStorage({
 
     destination: function (req, file, cb) {
-        console.log(req.user)
+        // console.log(req.user)
+
         if (req.route.path.includes('projects')) {
             fs.mkdirSync(`${project_img_loc}/${req.user._id.toString()}`, { recursive: true })
             cb(null, `${project_img_loc}/${req.user._id.toString()}`)

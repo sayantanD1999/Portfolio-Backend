@@ -16,7 +16,7 @@ const signup = async (data) => {
         // Validate if user exist in our database
         const oldUser = await User.findOne({ email });
         if (oldUser) {
-            return { status: 422, msg: "User Already Exist.Please Login" }
+            return { status: 422, data: { msg: "User Already Exist.Please Login" } }
         }
 
 
@@ -29,6 +29,8 @@ const signup = async (data) => {
             name: name,
             email: email.toLowerCase(), // sanitize
             password: encryptedUserPassword,
+            token: '',
+            expiresIn: ''
         });
         await Details.create({
             user_id: user._id,
@@ -52,7 +54,12 @@ const signup = async (data) => {
         // user.token = token;
 
         // return new user
-        console.log(new_user)
+        // console.log(new_user)
+
+        // let obj = new_user;
+        // obj.password = ""
+
+
         return {
             status: 200, data: {
                 data: new_user,
@@ -61,6 +68,7 @@ const signup = async (data) => {
         }
     } catch (err) {
         console.log(err);
+        return { status: 422, data: { msg: "Something went wrong" } }
     }
     // Our register logic ends here
 }
@@ -73,8 +81,12 @@ const signin = async (data) => {
 
         // Validate if user exist in our database
         const user = await User.findOne({ email });
+        console.log(user)
+        if (!user) {
+            return { status: 404, data: { msg: "No Such User Exists!" } }
+        }
 
-        if (user && (await bcrypt.compare(password, user.password))) {
+        if (await bcrypt.compare(password, user.password)) {
             // Create token
             const token = jwt.sign(
                 { user_id: user._id, email },
@@ -86,18 +98,22 @@ const signin = async (data) => {
 
             // save user token
             user.token = token;
-            user.expiresIn = "4h"
+            user.expiresIn = "8h"
+            user.save();
 
-            let obj = user;
-            obj.password=""
+            // let obj = user;
+            // obj.password = ""
 
             // console.log(obj)
 
             // user
-            return { status: 200, data: obj }
+
+
+            return { status: 200, data: user }
         }
-        // return res.status(400).send("Invalid Credentials");
-        return { status: 400, data: "Invalid Credentials" }
+        else {
+            return { status: 422, data: { msg: "Invalid Credentials" } }
+        }
 
         // Our login logic ends here
 

@@ -49,6 +49,18 @@ const addProject = async (req) => {
 
     const [first, ...rest] = req.file.path.split('/');
 
+    const existingProject = await Projects.find({ name: req.body.name })
+    // console.log(existingProject)
+    if(existingProject.length>0)
+    {
+        return {
+            status: 422, data: {
+                data: null,
+                message: "Provide an unique project name"
+            }
+        } 
+    }
+
     await Projects.create(
         {
             user_id: user._id.toString(),

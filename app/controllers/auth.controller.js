@@ -14,17 +14,17 @@ exports.signup = async (req, res) => {
 
 
 
-    if (!(email && password)) {
-        return res.status(400).json({
-            message: "All input is required!",
-        })
-    }
-    else {
-        const signupService = await signup(req.body)
-        console.log(signupService)
-        return res.status(signupService.status).json(
-            signupService.data)
-    }
+    // if (!(email && password)) {
+    //     return res.status(400).json({
+    //         message: "All input is required!",
+    //     })
+    // }
+    // else {
+    const signupService = await signup(req.body)
+    console.log(signupService)
+    return res.status(signupService.status).json(
+        signupService.data)
+    // }
 
 }
 
@@ -36,6 +36,7 @@ exports.signin = async (req, res) => {
     }
 
     const signinService = await signin(req.body)
+    console.log(signinService)
     return res.status(signinService.status).json(
         signinService.data)
 
@@ -44,9 +45,11 @@ exports.signin = async (req, res) => {
 
 exports.signout = async (req, res) => {
     try {
+        console.log(req.session)
         req.session = null;
         return res.status(200).send({ message: "You've been signed out!" });
     } catch (err) {
+        console.log(err)
         this.next(err);
     }
 };

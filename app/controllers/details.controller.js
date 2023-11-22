@@ -3,16 +3,19 @@ const { getProfile, updateProfile, getSkills, updateSkills, getEducation, update
 const { details, projects } = require("../models");
 const { validationResult } = require("express-validator");
 
-var formidable = require('formidable');
-
 exports.projects = async (req, res) => {
     const errors = validationResult(req)
     if (req.method == "POST") {
         try {
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
+            console.log('body', req.body, req.file, errors)
+            // if (!errors.isEmpty()) {
+            //     return res.status(400).json({ errors: errors.array() });
+            // }
+
+            if (!req.body.name) {
+                return res.status(422).json({ msg: "Project name is required" });
             }
-            // console.log('body', req.body, req.file)
+
             if (req.file) {
                 if (req.params.user_id) {
                     const projectService = await addProject(req)
@@ -33,10 +36,16 @@ exports.projects = async (req, res) => {
     }
     if (req.method == "PATCH") {
         try {
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
+            // if (!errors.isEmpty()) {
+            //     return res.status(400).json({ errors: errors.array() });
+            // }
             // console.log('body', req.body, req.file)
+
+            if (!req.body.name) {
+                return res.status(422).json({ msg: "Project name is required" });
+            }
+
+
             if (req.file) {
                 if (req.params._id) {
                     const projectService = await updateProject(req)

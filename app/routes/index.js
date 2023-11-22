@@ -12,6 +12,7 @@ const ApiDetailsValidator = new validator.DetailsValidator();
 //Auth
 router.post('/api/signup', ApiUserValidator.signup(), userController.signup);
 router.post('/api/signin', ApiUserValidator.signin(), userController.signin);
+router.post('/api/signout', userController.signout);
 
 //profile-image
 router.patch('/api/profile-img/:user_id', tokenValidation, upload.single('profile_img'), detailsController.profileImage);
@@ -31,14 +32,14 @@ router.patch('/api/skills/:user_id', ApiDetailsValidator.Skill(), tokenValidatio
 router.get('/api/skills/:user_id', tokenValidation, detailsController.skills);
 
 
-//Skills
+//Education
 router.patch('/api/education/:user_id', ApiDetailsValidator.Education(), tokenValidation, detailsController.education);
 router.get('/api/education/:user_id', tokenValidation, detailsController.education);
 
 
 //projects
-router.post('/api/projects/:user_id', ApiDetailsValidator.Projects(), tokenValidation, upload.single('img'), detailsController.projects);
-router.patch('/api/projects/:_id', ApiDetailsValidator.Projects(), tokenValidation, upload.single('img'), detailsController.projects);
+router.post('/api/projects/:user_id', tokenValidation, upload.single('img'), detailsController.projects);
+router.patch('/api/projects/:_id', tokenValidation, upload.single('img'), detailsController.projects);
 router.get('/api/projects/:user_id', tokenValidation, detailsController.projects);
 router.delete('/api/projects/:_id', tokenValidation, detailsController.projects);
 

@@ -10,15 +10,20 @@ const verifyToken = async (req, res, next) => {
   const token =
     (req.body.token || req.query.token || req.headers["authorization"]).split(' ')[1];
 
-    // console.log(token)
+  // console.log(token)
 
 
   if (!token) {
     return res.status(403).send("A token is required for authentication");
   }
   try {
-    const decoded = jwt.verify(token, config.TOKEN_KEY);
-    req.user = await user.findOne({_id: decoded.user_id});
+    const decoded = jwt.verify(token, config.TOKEN_KEY, (err, user) => {
+      if (err) {
+        return res.status(403).json({ error: 'Invalid Token.' });
+      }
+    });
+    console.log(decoded)
+    req.user = await user.findOne({ _id: decoded.user_id });
   } catch (err) {
     return res.status(401).send("Invalid Token");
   }

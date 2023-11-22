@@ -7,6 +7,7 @@ const User = mongoose.model(
     email: { type: String, unique: true },
     password: { type: String, default: null },
     token: { type: String },
+    expiresIn: { type: String },
   })
 );
 
