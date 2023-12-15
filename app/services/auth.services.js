@@ -30,7 +30,6 @@ const signup = async (data) => {
             email: email.toLowerCase(), // sanitize
             password: encryptedUserPassword,
             token: '',
-            expiresIn: ''
         });
         await Details.create({
             user_id: user._id,
@@ -96,15 +95,17 @@ const signin = async (data) => {
                 }
             );
 
+            const refreshToken = jwt.sign({ user_id: user._id, email }, process.env.TOKEN_KEY, { expiresIn: '1d' });
+
+            res
+                .cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'strict' })
+                .header('Authorization', accessToken)
+                .send(user);
+
             // save user token
             user.token = token;
-            user.expiresIn = "8h"
+            user.refreshToken = refreshToken;
             user.save();
-
-            // let obj = user;
-            // obj.password = ""
-
-            // console.log(obj)
 
             // user
 
@@ -123,7 +124,24 @@ const signin = async (data) => {
     }
 }
 
+const signoutService = async (req) => {
+    console.log(req.user, req.session)
+    const user = await User.findOne({ _id: req.user._id })
+    user.token = null;
+    user.refreshToken = token;
+    req.session = null;
+    req.user = null;
+    return {
+        status: 200, data: {
+            data: null,
+            message: "Logged Out Successfully"
+        }
+    }
+}
+
+
 module.exports = {
     signup,
-    signin
+    signin,
+    signoutService
 }

@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const { signup, signin } = require('../services/auth.services')
+const { signup, signin, signoutService } = require('../services/auth.services')
 
 
 exports.signup = async (req, res) => {
@@ -45,9 +45,9 @@ exports.signin = async (req, res) => {
 
 exports.signout = async (req, res) => {
     try {
-        console.log(req.session)
-        req.session = null;
-        return res.status(200).send({ message: "You've been signed out!" });
+        const service = await signoutService(req)
+        return res.status(service.status).json(
+            service.data)
     } catch (err) {
         console.log(err)
         this.next(err);

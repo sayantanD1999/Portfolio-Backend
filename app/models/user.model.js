@@ -4,10 +4,10 @@ const User = mongoose.model(
   "User",
   new mongoose.Schema({
     name: { type: String, default: null },
-    email: { type: String, unique: true },
+    email: { type: String, unique: true, require: true },
     password: { type: String, default: null },
     token: { type: String },
-    expiresIn: { type: String },
+    refreshToken: { type: String }
   })
 );
 
