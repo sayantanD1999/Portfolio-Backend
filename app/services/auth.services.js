@@ -72,11 +72,11 @@ const signup = async (data) => {
     // Our register logic ends here
 }
 
-const signin = async (data) => {
+const signin = async (req,res) => {
     // Our login logic starts here
     try {
         // Get user input
-        const { email, password } = data;
+        const { email, password } = req.body;
 
         // Validate if user exist in our database
         const user = await User.findOne({ email });
@@ -97,20 +97,28 @@ const signin = async (data) => {
 
             const refreshToken = jwt.sign({ user_id: user._id, email }, process.env.TOKEN_KEY, { expiresIn: '1d' });
 
-            res
-                .cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'strict' })
-                .header('Authorization', accessToken)
-                .send(user);
+            // res.cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'strict' })
+            //     .header('Authorization', accessToken)
+            //     .send(user);
 
             // save user token
             user.token = token;
             user.refreshToken = refreshToken;
             user.save();
 
+
+
+            let obj = {
+                _id : user._id,
+                token: user.token,
+                refreshToken: user.token,
+                name: user.name,
+                email: user.email,
+                expiresIn: user.expiresIn
+            }
+
             // user
-
-
-            return { status: 200, data: user }
+            return { status: 200, data: obj }
         }
         else {
             return { status: 422, data: { msg: "Invalid Credentials" } }
