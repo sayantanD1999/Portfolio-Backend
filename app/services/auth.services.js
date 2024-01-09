@@ -90,13 +90,13 @@ const signin = async (req, res) => {
             // Create token
             const accessToken = jwt.sign(
                 { user_id: user._id, email },
-                process.env.TOKEN_KEY,
+                process.env.JWT_AT_SECRET,
                 {
                     expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
                 }
             );
 
-            const refreshToken = jwt.sign({ user_id: user._id, email }, process.env.TOKEN_KEY, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY });
+            const refreshToken = jwt.sign({ user_id: email }, process.env.JWT_RT_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY });
 
             // save user token
             user.token = accessToken;
@@ -106,7 +106,7 @@ const signin = async (req, res) => {
                 _id: user._id,
                 accessToken: user.token,
                 ATExpiresIn : process.env.ACCESS_TOKEN_EXPIRY,
-                refreshToken: user.token,
+                refreshToken: user.refreshToken,
                 RTExpiresIn: process.env.REFRESH_TOKEN_EXPIRY,
                 name: user.name,
                 email: user.email,

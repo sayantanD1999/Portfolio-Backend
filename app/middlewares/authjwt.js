@@ -32,7 +32,7 @@ const verifyToken = async (req, res, next) => {
           return res.status(403).json({ error: 'Invalid Token.' });
         }
       });
-      const accessToken = jwt.sign({ user: decoded.user }, secretKey, { expiresIn: process.env.ACCESS_TOKEN_EXPIRY });
+      const accessToken = jwt.sign({ user: decoded.user._id }, secretKey, { expiresIn: process.env.ACCESS_TOKEN_EXPIRY });
 
       const user = await User.findOne({ email });
       // save user token
