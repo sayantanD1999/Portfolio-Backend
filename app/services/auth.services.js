@@ -72,9 +72,10 @@ const signup = async (data) => {
     // Our register logic ends here
 }
 
-const signin = async (req,res) => {
+const signin = async (req, res) => {
     // Our login logic starts here
     try {
+
         // Get user input
         const { email, password } = req.body;
 
@@ -87,34 +88,28 @@ const signin = async (req,res) => {
 
         if (await bcrypt.compare(password, user.password)) {
             // Create token
-            const token = jwt.sign(
+            const accessToken = jwt.sign(
                 { user_id: user._id, email },
                 process.env.TOKEN_KEY,
                 {
-                    expiresIn: "8h",
+                    expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
                 }
             );
 
-            const refreshToken = jwt.sign({ user_id: user._id, email }, process.env.TOKEN_KEY, { expiresIn: '1d' });
-
-            // res.cookie('refreshToken', refreshToken, { httpOnly: true, sameSite: 'strict' })
-            //     .header('Authorization', accessToken)
-            //     .send(user);
+            const refreshToken = jwt.sign({ user_id: user._id, email }, process.env.TOKEN_KEY, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY });
 
             // save user token
-            user.token = token;
+            user.token = accessToken;
             user.refreshToken = refreshToken;
             user.save();
-
-
-
             let obj = {
-                _id : user._id,
-                token: user.token,
+                _id: user._id,
+                accessToken: user.token,
+                ATExpiresIn : process.env.ACCESS_TOKEN_EXPIRY,
                 refreshToken: user.token,
+                RTExpiresIn: process.env.REFRESH_TOKEN_EXPIRY,
                 name: user.name,
                 email: user.email,
-                expiresIn: user.expiresIn
             }
 
             // user
@@ -136,7 +131,7 @@ const signoutService = async (req) => {
     console.log(req.user, req.session)
     const user = await User.findOne({ _id: req.user._id })
     user.token = null;
-    user.refreshToken = token;
+    user.refreshToken = null
     req.session = null;
     req.user = null;
     return {

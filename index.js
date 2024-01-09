@@ -10,7 +10,7 @@ dbMongoose();
 
 
 var corsOptions = {
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL,
     credentials: true,            //access-control-allow-credentials:true
     optionSuccessStatus: 200
 };
@@ -27,7 +27,8 @@ app.use(
     cookieSession({
         name: "portfolio-session",
         keys: ["COOKIE_SECRET"], // should use as secret environment variable
-        httpOnly: true
+        // httpOnly: true,
+        credentials: true
     })
 );
 

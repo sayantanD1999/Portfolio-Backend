@@ -35,8 +35,8 @@ exports.signin = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const signinService = await signin(req,res)
-    console.log(signinService)
+    const signinService = await signin(req, res)
+    console.log('signinservice  --------------------------------->', signinService)
     return res.status(signinService.status).json(
         signinService.data)
 
