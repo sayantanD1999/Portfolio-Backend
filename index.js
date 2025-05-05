@@ -4,9 +4,6 @@ const cookieSession = require("cookie-session");
 const path = require('path');
 const app = express();
 require('dotenv').config();
-const dbMongoose = require('./app/utils/db')
-dbMongoose();
-
 
 
 var corsOptions = {
@@ -58,5 +55,5 @@ app.use("/", route);
 // set port, listen for requests
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
+    console.log(`<<<<<<<<=============================      Server is running on port ${PORT}      ===============================>>>>`);
 });

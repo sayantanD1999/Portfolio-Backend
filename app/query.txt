@@ -1,0 +1,5 @@
+CREATE Table Tokens (
+    user_id INT,
+    token VARCHAR(200),
+    refresh_token VARCHAR(200)
+);
