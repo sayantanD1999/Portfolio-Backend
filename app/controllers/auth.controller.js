@@ -12,19 +12,11 @@ exports.signup = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-
-
-    // if (!(email && password)) {
-    //     return res.status(400).json({
-    //         message: "All input is required!",
-    //     })
-    // }
-    // else {
     const signupService = await signup(req.body)
     console.log(signupService)
     return res.status(signupService.status).json(
         signupService.data)
-    // }
+    
 
 }
 

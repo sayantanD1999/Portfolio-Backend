@@ -207,38 +207,6 @@ const updateProfileImage = async (req) => {
     }
 }
 
-//Skills
-
-const getSkills = async (user_id) => {
-    const data = await Details.findOne({ user_id })
-    return {
-        status: 200, data: {
-            data: data.skills,
-            message: "Skills Fetched Successfully"
-        }
-    }
-}
-
-const updateSkills = async (details, user_id) => {
-    // const _id = user_id
-    const data = await Details.findOne({ user_id })
-    console.log(details, data)
-    if (data) {
-        // console.log(details)
-        data.skills = details
-        data.user_id = user_id
-        data.save();
-        return {
-            status: 200, data: {
-                data: data.skills,
-                message: "Skills Updated Successfully"
-            }
-        }
-    }
-    else {
-        return { status: 422, data: { message: "Invalid Request" } }
-    }
-}
 
 //Education
 

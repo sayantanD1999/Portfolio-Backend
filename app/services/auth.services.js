@@ -133,11 +133,15 @@ const signin = async (req, res) => {
 
 const signoutService = async (req) => {
   console.log(req.user, req.session);
-  const user = await User.findOne({ _id: req.user._id });
+  const { email } = req.user;
+  const user = await User.getParticularUser("", email);
   user.token = null;
   user.refreshToken = null;
   req.session = null;
   req.user = null;
+
+  await AuthToken.delete({ user_id: user[0].user_id });
+
   return {
     status: 200,
     data: {
