@@ -10,8 +10,8 @@ var storage = multer.diskStorage({
         // console.log(req.user)
 
         if (req.route.path.includes('projects')) {
-            fs.mkdirSync(`${project_img_loc}/${req.user._id.toString()}`, { recursive: true })
-            cb(null, `${project_img_loc}/${req.user._id.toString()}`)
+            fs.mkdirSync(`${project_img_loc}/${req.user.user_id.toString()}`, { recursive: true })
+            cb(null, `${project_img_loc}/${req.user.user_id.toString()}`)
         }
         else {
             fs.mkdirSync(profile_img_loc, { recursive: true })
@@ -25,7 +25,7 @@ var storage = multer.diskStorage({
         if (req.route.path.includes('projects')) {
             cb(null, req.body.name + "project_pic." + file.mimetype.split('/')[1])
         } else {
-            cb(null, req.user._id + "profile_pic." + file.mimetype.split('/')[1])
+            cb(null, req.user.user_id + "profile_pic." + file.mimetype.split('/')[1])
         }
 
     }

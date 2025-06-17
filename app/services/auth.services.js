@@ -75,18 +75,20 @@ const signin = async (req, res) => {
     // Get user input
     const { email, password } = req.body;
 
+    console.log(email, password);
+
     // Validate if user exist in our database
     const user = await User.getParticularUser("", email);
-    // console.log(user);
+    console.log(user.password);
     if (!user) {
       return { status: 404, data: { msg: "No Such User Exists!" } };
     }
 
-    if (await bcrypt.compare(password, user[0].password)) {
+    if (await bcrypt.compare(password, user.password)) {
       // Create token
-      console.log(user[0].user_id);
+      console.log(user.user_id);
       const accessToken = jwt.sign(
-        { user_id: user[0].user_id, email },
+        { user_id: user.user_id, email },
         process.env.JWT_AT_SECRET,
         {
           expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
@@ -105,19 +107,19 @@ const signin = async (req, res) => {
       //   user.save();
 
       await AuthToken.create({
-        user_id: user[0].user_id,
+        user_id: user.user_id,
         token: accessToken,
         refresh_token: refreshToken,
       });
 
       let obj = {
-        _id: user[0].user_id,
+        _id: user.user_id,
         accessToken: accessToken,
         ATExpiresIn: process.env.ACCESS_TOKEN_EXPIRY,
         refreshToken: refreshToken,
         RTExpiresIn: process.env.REFRESH_TOKEN_EXPIRY,
-        name: user[0].name,
-        email: user[0].email,
+        name: user.name,
+        email: user.email,
       };
 
       // user

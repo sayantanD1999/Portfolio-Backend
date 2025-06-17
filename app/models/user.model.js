@@ -13,7 +13,7 @@ const users = {
       [user_id, email]
     );
 
-    console.log("particular user ================>", rows);
+    // console.log("particular user ================>", rows);
     return rows[0];
   },
 

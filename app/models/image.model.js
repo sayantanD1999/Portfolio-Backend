@@ -1,11 +1,10 @@
 const db = require("../config/db");
 
 const images = {
-  async update(data) {
-    const { img, user_id } = data;
+  async update(img, id) {
     const [rows] = await db.query(
       "UPDATE Users SET img = ? WHERE user_id = ?",
-      [img, user_id]
+      [img, id]
     );
     return rows;
   },
