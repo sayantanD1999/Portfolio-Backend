@@ -1,11 +1,8 @@
 const Skill = require("../models/skill.model");
 
-const addSkill = async (req, res) => {
+const addSkill = async (data) => {
   try {
     const { user_id, skills } = data;
-
-    const newSkill = [];
-
     for (let i = 0; i < skills.length; i++) {
       // Add skill to the database
       let addedSkill = await Skill.create({
@@ -13,8 +10,9 @@ const addSkill = async (req, res) => {
         skill_name: skills[i].skill_name,
         proficiency: skills[i].proficiency,
       });
-      newSkill.push(addedSkill);
     }
+
+    const newSkill = await Skill.getAllSkills(user_id);
 
     return {
       status: 201,
@@ -38,9 +36,11 @@ const updateSkill = async (data) => {
       proficiency: proficiency,
     });
 
+    const newSkills = await Skill.getAllSkills(user_id);
+
     return {
       status: 200,
-      data: { msg: "Skill updated successfully", skill: updatedSkill },
+      data: { msg: "Skill updated successfully", skill: newSkills },
     };
   } catch (err) {
     console.error(err);
@@ -71,10 +71,10 @@ const deleteSkill = async (data) => {
 
     // Delete skill from the database
     await Skill.delete(user_id, skill_id);
-
+    let updatedSkills = await Skill.getAllSkills(user_id);
     return {
       status: 200,
-      data: { msg: "Skill deleted successfully" },
+      data: { msg: "Skill deleted successfully", skills: updatedSkills },
     };
   } catch (err) {
     console.error(err);

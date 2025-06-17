@@ -34,7 +34,7 @@ exports.skills = async (req, res) => {
   }
   if (req.method == "GET") {
     try {
-      console.log(req.user._id.toString());
+      console.log(req.user);
       const user_id = req.params.user_id;
       const skillService = await getAllSkills(req.params);
       return res.status(skillService.status).json(skillService.data);

@@ -6,7 +6,7 @@ const { upload } = require("../utils/multer")
 const userController = require("../controllers/auth.controller");
 const skillController = require("../controllers/skill.controller");
 const imgController = require("../controllers/image.controller");
-const detailsController = require('../controllers/details.controller');
+// const detailsController = require('../controllers/details.controller');
 const validator = require("../validator/index");
 const ApiUserValidator = new validator.UserValidator();
 const ApiDetailsValidator = new validator.DetailsValidator();
@@ -21,8 +21,8 @@ router.patch('/api/profile-img/:user_id', tokenValidation, upload.single('profil
 
 
 // Skills
-router.patch('/api/skills', ApiDetailsValidator.Skill(), tokenValidation, skillController.skills);
-router.get('/api/skills/:user_id', tokenValidation, skillController.skills);
+router.patch('/api/skills', tokenValidation, skillController.skills);
+router.get('/api/skills/:user_id',tokenValidation, skillController.skills);
 router.post('/api/skills', ApiDetailsValidator.Skill(), tokenValidation, skillController.skills);
 router.delete('/api/skills', tokenValidation, skillController.skills);
 

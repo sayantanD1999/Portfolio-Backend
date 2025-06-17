@@ -14,7 +14,7 @@ const users = {
     );
 
     console.log("particular user ================>", rows);
-    return rows;
+    return rows[0];
   },
 
   async create(data) {

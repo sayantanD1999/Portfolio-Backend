@@ -11,7 +11,7 @@ const users = {
   async create(data) {
     const { user_id, skill_name, proficiency } = data;
     const [rows] = await db.query(
-      "INSERT INTO SKills (user_id,skill_name, proficiency) VALUES (?,?,?)",
+      "INSERT INTO Skills (user_id,skill_name, proficiency_level) VALUES (?,?,?)",
       [user_id, skill_name, proficiency]
     );
     return rows;
@@ -20,7 +20,7 @@ const users = {
   async update(data) {
     const { user_id, skill_name, proficiency, skill_id } = data;
     const [rows] = await db.query(
-      "UPDATE Skills SET skill_name = ?, proficiency = ? WHERE skill_id = ? AND user_id = ?",
+      "UPDATE Skills SET skill_name = ?, proficiency_level = ? WHERE skill_id = ? AND user_id = ?",
       [skill_name, proficiency, skill_id, user_id]
     );
     return rows;

@@ -77,15 +77,16 @@ const signin = async (req, res) => {
 
     // Validate if user exist in our database
     const user = await User.getParticularUser("", email);
-    console.log(user);
+    // console.log(user);
     if (!user) {
       return { status: 404, data: { msg: "No Such User Exists!" } };
     }
 
     if (await bcrypt.compare(password, user[0].password)) {
       // Create token
+      console.log(user[0].user_id);
       const accessToken = jwt.sign(
-        { user_id: user._id, email },
+        { user_id: user[0].user_id, email },
         process.env.JWT_AT_SECRET,
         {
           expiresIn: process.env.ACCESS_TOKEN_EXPIRY,

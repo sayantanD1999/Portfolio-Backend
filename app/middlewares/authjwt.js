@@ -13,14 +13,24 @@ const verifyToken = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(accessToken, config.TOKEN_KEY, (err, user) => {
-      if (err) {
-        return res.status(403).json({ error: "Invalid Token." });
-      }
-    });
+    console.log(config.JWT_AT_SECRET, accessToken);
+
+    const decoded = jwt.verify(accessToken, config.JWT_AT_SECRET);
+    // (err, user) => {
+    //   if (err) {
+    //     console.log(err, user)
+    //     return res.status(403).json({ error: "Invalid Token..." });
+    //   }
+    // });
+    console.log(decoded);
+    if (!decoded) {
+      return res.status(403).json({ error: "Invalid Token..." });
+    }
+
     req.user = await user.getParticularUser({ user_id: decoded.user_id });
     next();
   } catch (error) {
+    console.log(error);
     if (!refreshToken) {
       return res.status(401).send("Access Denied. No refresh token provided.");
     }
@@ -46,13 +56,10 @@ const verifyToken = async (req, res, next) => {
         token: accessToken,
         refresh_token: refreshToken,
       });
-
     } catch (error) {
       return res.status(400).send("Invalid Token.");
     }
   }
-
-
 };
 
 module.exports = verifyToken;
