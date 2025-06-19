@@ -28,32 +28,9 @@ const signup = async (data) => {
       password: encryptedUserPassword,
       token: "",
     });
-    // await Details.create({
-    //   user_id: user._id,
-    //   profile: {
-    //     email: email.toLowerCase(), // sanitize
-    //   },
-    // });
+
     const new_user = await User.getParticularUser("", email);
 
-    // console.log(process.env.TOKEN_KEY)
-
-    // Create token
-    // const token = jwt.sign(
-    //     { user_id: user._id, email },
-    //     process.env.TOKEN_KEY,
-    //     {
-    //         expiresIn: "1h",
-    //     }
-    // );
-    // // save user token
-    // user.token = token;
-
-    // return new user
-    // console.log(new_user)
-
-    // let obj = new_user;
-    // obj.password = ""
 
     return {
       status: 200,

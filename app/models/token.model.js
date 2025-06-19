@@ -20,10 +20,10 @@ const tokens = {
   },
 
   async findOne(data) {
-    const { user_id, token, refresh_token } = data;
+    const { user_id, token } = data;
     const [rows] = await db.query(
-      "SELECT * FROM AuthTokens WHERE user_id=? AND token=? AND refresh_token=?",
-      [user_id, token, refresh_token]
+      "SELECT * FROM AuthTokens WHERE user_id=? AND token=? ",
+      [user_id, token]
     );
     return rows;
   },

@@ -16,12 +16,16 @@ const verifyToken = async (req, res, next) => {
     console.log(config.JWT_AT_SECRET, accessToken);
 
     const decoded = jwt.verify(accessToken, config.JWT_AT_SECRET);
-    // (err, user) => {
-    //   if (err) {
-    //     console.log(err, user)
-    //     return res.status(403).json({ error: "Invalid Token..." });
-    //   }
-    // });
+  
+    const isTokenPresent = await AuthToken.findOne({
+      user_id: decoded.user_id,
+      token: accessToken,
+    });
+
+    if (isTokenPresent.length === 0) {
+      return res.status(401).json({ error: "Unauthorized request..." });
+    }
+
     console.log(decoded);
     if (!decoded) {
       return res.status(403).json({ error: "Invalid Token..." });
@@ -41,7 +45,7 @@ const verifyToken = async (req, res, next) => {
         config.TOKEN_KEY,
         (err, user) => {
           if (err) {
-            return res.status(403).json({ error: "Invalid Token." });
+            return res.status(401).json({ error: "Invalid Token." });
           }
         }
       );

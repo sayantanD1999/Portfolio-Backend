@@ -18,19 +18,21 @@ const users = {
   },
 
   async create(data) {
-    const { user_id, email, password, name, created_at, updated_at } = data;
+    const { user_id, email, password, name } = data;
+    const date = new Date();
     const [rows] = await db.query(
       "INSERT INTO Users (user_id,email,password,name,created_at, updated_at) VALUES (?,?,?,?,?, ?)",
-      [user_id, email, password, name, created_at, updated_at]
+      [user_id, email, password, name, date, date]
     );
     return rows;
   },
 
   async update(data) {
     const { password, name, user_id } = data;
+    const date = new Date();
     const [rows] = await db.query(
-      "UPDATE Users SET password = ?, name = ? WHERE user_id = ?",
-      [password, name, user_id]
+      "UPDATE Users SET password = ?, name = ?, updated_at=? WHERE user_id = ?",
+      [password, name, date, user_id]
     );
     return rows;
   },
